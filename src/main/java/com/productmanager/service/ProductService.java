@@ -16,7 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 
 @Service
 @AllArgsConstructor
-@NoArgsConstructor
 @Slf4j
 public class ProductService {
 	
