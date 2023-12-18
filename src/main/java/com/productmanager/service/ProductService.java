@@ -3,6 +3,7 @@ package com.productmanager.service;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import com.productmanager.customizedException.ProductFactoryException;
 import com.productmanager.factory.ProductFactory;
@@ -46,6 +47,16 @@ public class ProductService {
 		}
 		
 		return opProductDto.get();
+	}
+	
+	public Optional<ProductDto> getProduct(Long id) {
+		Optional<Product> opfoundProduct=productRepository.findById(id);
+		if (opfoundProduct.isEmpty()) {
+			log.info("Product not found");
+			return Optional.ofNullable(null);
+		}
+		log.info("Found product: {}", opfoundProduct.get());
+		return productFactory.convertToProductDto(opfoundProduct.get());
 	}
 
 }
