@@ -11,7 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Slf4j
-public class ProductManagerFactory {
+public class ProductFactory {
 	
 	public Optional<Product> createProduct(ProductDto productDto) {
 		log.info("Creating product from productDto: {}", productDto);
