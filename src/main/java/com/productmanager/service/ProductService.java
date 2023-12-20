@@ -50,11 +50,18 @@ public class ProductService {
 	}
 	
 	public Optional<ProductDto> getProduct(Long id) {
+		
+		if (id==null) {
+			log.info("Id must not be null");
+			return Optional.ofNullable(null);
+		}
+		
 		Optional<Product> opfoundProduct=productRepository.findById(id);
 		if (opfoundProduct.isEmpty()) {
 			log.info("Product not found");
 			return Optional.ofNullable(null);
 		}
+		
 		log.info("Found product: {}", opfoundProduct.get());
 		return productFactory.convertToProductDto(opfoundProduct.get());
 	}

@@ -1,8 +1,11 @@
 package com.productmanager.service;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -68,5 +71,61 @@ public class ProductServiceTest extends ProductManagerApplicationTests {
 		assertEquals(1289.56,result.getPrice());
 		assertEquals(12L,result.getQuantity());
 	}
+	
+	@Test
+	void getProductWithNullId() {
+		assertDoesNotThrow(()->{
+			productService.getProduct(null);
+		});	
+		Optional<ProductDto> ris=productService.getProduct(null);
+		assertTrue(ris.isEmpty());
+	}
+	
+	@Test
+	void getProductWhenNotFoundResource() {
+		when(productRepository.findById(any(Long.class)))
+		.thenReturn(Optional.ofNullable(null));
+		assertDoesNotThrow(()->{
+			productService.getProduct(5L);
+		});	
+		Optional<ProductDto> ris=productService.getProduct(5L);
+		assertTrue(ris.isEmpty());
+	}
+	
+	@Test
+	void getProductWhenResourceHasBeenFound() {
+		Product product=Product.builder()
+				.id(5L)
+				.name("SmartPhone LG")
+				.price(1399.25)
+				.quantity(52L)
+				.build();
+		
+		ProductDto productDto=ProductDto.builder()
+				.id(5L)
+				.name("SmartPhone LG")
+				.price(1399.25)
+				.quantity(52L)
+				.build();
+		
+		when(productRepository.findById(any(Long.class)))
+		.thenReturn(Optional.of(product));
+		
+		when(productFactory.convertToProductDto(any(Product.class)))
+		.thenReturn(Optional.of(productDto));
+		
+		assertDoesNotThrow(()->{
+			productService.getProduct(5L);
+		});	
+		
+		Optional<ProductDto> ris=productService.getProduct(5L);
+		assertFalse(ris.isEmpty());
+		ProductDto convertedProduct=ris.get();	
+		assertEquals(5,convertedProduct.getId());
+		assertEquals("SmartPhone LG",convertedProduct.getName());
+		assertEquals(1399.25,convertedProduct.getPrice());
+		assertEquals(52,convertedProduct.getQuantity());
+	}
+
 
 }
